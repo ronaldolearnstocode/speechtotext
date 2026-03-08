@@ -7,6 +7,7 @@ Run: python main.py [--config path/to/config.yaml]
 from __future__ import annotations
 
 import argparse
+import os
 import signal
 import sys
 import threading
@@ -16,20 +17,35 @@ from queue import Queue
 # Add project root so speechtotext package is importable
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+# Parse args and add CUDA bin to DLL path *before* importing transcriber (which pulls in numpy/ctranslate2)
+parser = argparse.ArgumentParser(description="Speech-to-Text: hold hotkey to record, release to transcribe.")
+parser.add_argument("--config", type=Path, default=None, help="Path to config.yaml")
+parser.add_argument("--debug", action="store_true", help="Print hotkey/recording events to trace issues")
+parser.add_argument("--no-tray", action="store_true", help="Run without system tray icon")
+device_group = parser.add_mutually_exclusive_group()
+device_group.add_argument("--cpu", action="store_true", help="Force CPU (int8) for transcription")
+device_group.add_argument("--gpu", action="store_true", help="Force GPU/CUDA (float16) for transcription; overrides config device/compute_type")
+args = parser.parse_args()
+
+if args.gpu and sys.platform == "win32":
+    from speechtotext import cuda_path
+    cuda_bin = cuda_path.get_cuda_bin_path()
+    if cuda_bin:
+        if hasattr(os, "add_dll_directory"):
+            os.add_dll_directory(cuda_bin)
+        # Prepend to PATH so loaders that use PATH (e.g. ctranslate2) find cublas64_12.dll
+        path_env = os.environ.get("PATH", "")
+        if cuda_bin not in path_env.split(os.pathsep):
+            os.environ["PATH"] = cuda_bin + os.pathsep + path_env
+
 from speechtotext.audio_capture import start_audio_thread
 from speechtotext.config_loader import load_config
 from speechtotext.hotkey import start_hotkey_thread
 from speechtotext.injector import start_injector_thread
-from speechtotext.transcriber import start_transcriber_thread
+from speechtotext.transcriber import get_cuda_bin_path, start_transcriber_thread
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Speech-to-Text: hold hotkey to record, release to transcribe.")
-    parser.add_argument("--config", type=Path, default=None, help="Path to config.yaml")
-    parser.add_argument("--debug", action="store_true", help="Print hotkey/recording events to trace issues")
-    parser.add_argument("--no-tray", action="store_true", help="Run without system tray icon")
-    args = parser.parse_args()
-
     config = load_config(args.config)
     hotkey_combo = config["hotkey"]
     quit_hotkey_combo = config.get("quit_hotkey") or "ctrl+shift+q"
@@ -37,6 +53,18 @@ def main() -> int:
     model_name = config["model_name"]
     device = config["device"]
     compute_type = config["compute_type"]
+    if args.cpu:
+        device = "cpu"
+        compute_type = "int8"
+    elif args.gpu:
+        device = "cuda"
+        compute_type = "float16"
+        cuda_bin = get_cuda_bin_path()
+        if not cuda_bin or not Path(cuda_bin).is_dir():
+            print("[main] CUDA not found; --gpu will likely fail. Set CUDA_PATH or add the toolkit bin folder to PATH.")
+        else:
+            if debug:
+                print("[main] CUDA bin added to DLL path:", cuda_bin)
     sample_rate = config["sample_rate"]
     chunk_duration_ms = config["chunk_duration_ms"]
     vad_aggressiveness = config["vad_aggressiveness"]
@@ -88,6 +116,8 @@ def main() -> int:
         compute_type=compute_type,
         vad_filter=vad_filter,
         vad_min_silence_duration_ms=vad_min_silence_duration_ms,
+        report_timing=args.cpu or args.gpu,
+        device_label=device,
     )
     t_injector = start_injector_thread(
         text_queue=text_queue,
@@ -114,6 +144,8 @@ def main() -> int:
         signal.signal(signal.SIGTERM, shutdown)
 
     print(f"Speech-to-Text running. Hold {hotkey_combo} to record, release to transcribe. Press {quit_hotkey_combo} or Ctrl+C to exit.")
+    if args.cpu or args.gpu:
+        print(f"Device: {device} ({compute_type}). Per-transcription time will be printed.")
     if not args.no_tray:
         print("Tray icon active: right-click for Show/Hide window or Quit.")
     if debug:

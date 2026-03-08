@@ -75,6 +75,13 @@ python main.py --debug
 ```
 Then hold/release the hotkey; you should see `[hotkey] RECORDING START` and `[hotkey] RECORDING STOP`. If you see nothing, run the terminal **as Administrator** (right‑click → Run as administrator), or change `hotkey` in `config.yaml` to `ctrl+alt` and try again.
 
+Use **`--cpu`** or **`--gpu`** to force CPU (int8) or GPU/CUDA (float16) for this run; useful to compare latency without editing config. When either is set, per-transcription time is printed (e.g. `Transcription (cuda): 0.42 s`). For `--gpu`, **CUDA 12** (e.g. CUDA Toolkit 12.x with `cublas64_12.dll` on PATH) is required; if you see "cublas64_12.dll is not found", install [CUDA Toolkit 12](https://developer.nvidia.com/cuda-downloads) and add its `bin` folder to PATH, or use `--cpu`.
+
+```bash
+python main.py --cpu
+python main.py --gpu
+```
+
 Keep the target application focused so the text is inserted at the cursor.
 
 ## Configuration
@@ -112,6 +119,19 @@ The app uses four threads:
 - **No sound / mic not detected**: Check the default microphone in system settings and that no other app has exclusive access. Try another mic or port.
 - **Model download**: The first run downloads the Whisper model (e.g. large-v3); this can take a few minutes and requires internet. After that it runs offline from cache.
 - **PyAudio install fails**: See the Windows note under Install; on Linux you may need `portaudio19-dev` (e.g. `sudo apt install portaudio19-dev`).
+
+### GPU (CUDA 12)
+
+For **`--gpu`** on Windows you need the [CUDA 12 Toolkit](https://developer.nvidia.com/cuda-downloads) installed (e.g. for NVIDIA RTX 5070 or other supported GPUs). The app will look for CUDA DLLs (e.g. `cublas64_12.dll`) in:
+
+- The folder given by the **`CUDA_PATH`** environment variable (e.g. `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.x`) — the app uses `CUDA_PATH\bin`, or  
+- The default path `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.x\bin` (latest v12.x found).
+
+**If you see "cublas64_12.dll is not found" or "[main] CUDA path not found":**
+
+1. Install CUDA 12 Toolkit if you have not, and ensure its **`bin`** folder is on your system PATH, or set **`CUDA_PATH`** to the toolkit root (e.g. `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6`).
+2. In a **new** terminal, run `where cublas64_12.dll`. If it prints a path, the shell can find the DLL; run the app from that same terminal (`python main.py --gpu`). If `where` finds nothing, add the CUDA 12 `bin` folder to PATH in System Environment Variables and restart the terminal (and Cursor if you launch from it).
+3. If it still fails, use `--cpu` for this run; the app will print a short message when the CUDA path is not found so you can fix PATH or `CUDA_PATH`.
 
 ## Phase 2 (future)
 
