@@ -20,7 +20,7 @@ A local, high-performance voice-to-text desktop utility. Hold a global hotkey to
 
 1. Clone the repo and enter it:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/speechtotext.git
+   git clone https://github.com/ronaldolearnstocode/speechtotext.git
    cd speechtotext
    ```
 
