@@ -1,0 +1,39 @@
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+*.egg-info/
+*.egg
+
+# Model / cache (faster-whisper, Hugging Face)
+.cache/
+~/.cache/huggingface/
+*.bin
+*.onnx
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config overrides (optional)
+.env.local
+config.local.yaml
