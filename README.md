@@ -24,13 +24,17 @@ A local, high-performance voice-to-text desktop utility. Hold a global hotkey to
    cd speechtotext
    ```
 
-2. Create a virtual environment and install dependencies:
+2. Create a virtual environment and install dependencies (recommended; avoids system Python permission issues):
    ```bash
    python -m venv venv
-   venv\Scripts\activate   # Windows
+   venv\Scripts\activate   # Windows (Command Prompt)
+   # On Windows PowerShell, if activation fails with "running scripts is disabled", run once:
+   #   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   # then:  .\venv\Scripts\Activate.ps1
    # source venv/bin/activate   # Linux/macOS
    pip install -r requirements.txt
    ```
+   If you prefer not to use a venv and get "Access is denied" when installing, use: `pip install -r requirements.txt --user`. If you then get `ModuleNotFoundError: No module named 'pkg_resources'`, install setuptools for system Python (run PowerShell as Administrator): `pip install setuptools`
 
 3. **Windows + PyAudio**: If `pip install PyAudio` fails, try:
    ```bash
@@ -58,6 +62,12 @@ python main.py --config path/to/config.yaml
 - **Hold** the hotkey (default: **Ctrl+Windows**) to record from your microphone.
 - **Release** the hotkey to stop recording; the clip is transcribed and then typed into the window that has focus (e.g. editor, chat, form).
 - **Ctrl+C** in the terminal to exit.
+
+To see if the hotkey is detected, run with `--debug`:
+```bash
+python main.py --debug
+```
+Then hold/release the hotkey; you should see `[hotkey] RECORDING START` and `[hotkey] RECORDING STOP`. If you see nothing, run the terminal **as Administrator** (right‑click → Run as administrator), or change `hotkey` in `config.yaml` to `ctrl+alt` and try again.
 
 Keep the target application focused so the text is inserted at the cursor.
 
@@ -89,7 +99,8 @@ The app uses four threads:
 
 ## Troubleshooting
 
-- **Hotkey not working**: On Windows, global hotkeys sometimes need the app to run with elevated privileges (Run as administrator). On Linux, ensure the process has access to the input device.
+- **Not recording or pasting**: Run `python main.py --debug`. When you hold the hotkey you should see `[hotkey] RECORDING START`; when you release, `[hotkey] RECORDING STOP`. If you see nothing, the global hotkey is not being detected: **run the terminal as Administrator** (right‑click the terminal/PowerShell icon → Run as administrator, then `cd` to the project and `python main.py`). Alternatively, in `config.yaml` set `hotkey: "ctrl+alt"` and try again (Ctrl+Alt often works without admin).
+- **Hotkey not working**: On Windows, global hotkeys often require running the app with elevated privileges (Run as administrator). On Linux, ensure the process has access to the input device.
 - **No sound / mic not detected**: Check the default microphone in system settings and that no other app has exclusive access. Try another mic or port.
 - **Model download**: The first run downloads the Whisper model (e.g. large-v3); this can take a few minutes and requires internet. After that it runs offline from cache.
 - **PyAudio install fails**: See the Windows note under Install; on Linux you may need `portaudio19-dev` (e.g. `sudo apt install portaudio19-dev`).

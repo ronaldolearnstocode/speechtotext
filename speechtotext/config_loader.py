@@ -13,6 +13,7 @@ except ImportError:
 
 _DEFAULTS = {
     "hotkey": "ctrl+win",
+    "quit_hotkey": "ctrl+shift+q",
     "model_name": "large-v3",
     "device": "cpu",
     "compute_type": "int8",

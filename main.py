@@ -26,10 +26,13 @@ from speechtotext.transcriber import start_transcriber_thread
 def main() -> int:
     parser = argparse.ArgumentParser(description="Speech-to-Text: hold hotkey to record, release to transcribe.")
     parser.add_argument("--config", type=Path, default=None, help="Path to config.yaml")
+    parser.add_argument("--debug", action="store_true", help="Print hotkey/recording events to trace issues")
     args = parser.parse_args()
 
     config = load_config(args.config)
     hotkey_combo = config["hotkey"]
+    quit_hotkey_combo = config.get("quit_hotkey") or "ctrl+shift+q"
+    debug = args.debug
     model_name = config["model_name"]
     device = config["device"]
     compute_type = config["compute_type"]
@@ -45,9 +48,13 @@ def main() -> int:
 
     def on_press() -> None:
         recording_event.set()
+        if debug:
+            print("[main] recording_event SET")
 
     def on_release() -> None:
         recording_event.clear()
+        if debug:
+            print("[main] recording_event CLEAR (audio should be submitted)")
 
     # Start threads: B (audio), C (transcriber), D (injector), then A (hotkey)
     t_audio = start_audio_thread(
@@ -76,6 +83,8 @@ def main() -> int:
         on_press=on_press,
         on_release=on_release,
         stop_event=stop_event,
+        debug=debug,
+        quit_hotkey_combo=quit_hotkey_combo,
     )
 
     def shutdown(*args: object) -> None:
@@ -88,7 +97,9 @@ def main() -> int:
     if hasattr(signal, "SIGTERM"):
         signal.signal(signal.SIGTERM, shutdown)
 
-    print(f"Speech-to-Text running. Hold {hotkey_combo} to record, release to transcribe. Ctrl+C to exit.")
+    print(f"Speech-to-Text running. Hold {hotkey_combo} to record, release to transcribe. Press {quit_hotkey_combo} or Ctrl+C to exit.")
+    if debug:
+        print("[debug] If hotkey does nothing, try: Run terminal as Administrator (Windows needs this for global hotkeys).")
     t_hotkey.join()
     t_audio.join(timeout=2.0)
     t_transcriber.join(timeout=5.0)

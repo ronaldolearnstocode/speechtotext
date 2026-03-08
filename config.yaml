@@ -2,7 +2,10 @@
 
 # Global hotkey: hold to record, release to transcribe
 # Options: "ctrl+win", "ctrl+alt", or custom (see keyboard library syntax)
-hotkey: "ctrl+win"
+hotkey: "ctrl+alt"
+
+# Quit hotkey: press to stop the app (use if Ctrl+C is captured)
+quit_hotkey: "ctrl+shift+q"
 
 # Whisper model (large-v3 recommended for accuracy; large-v2 for less RAM)
 model_name: "large-v3"

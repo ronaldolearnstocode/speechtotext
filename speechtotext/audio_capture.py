@@ -8,7 +8,11 @@ import time
 from queue import Empty, Queue
 
 import pyaudio
-import webrtcvad
+
+try:
+    import webrtcvad
+except ImportError:
+    webrtcvad = None  # optional: VAD not used for filtering in this flow
 
 # Whisper expects 16 kHz mono 16-bit PCM
 SAMPLE_RATE = 16000
@@ -41,7 +45,7 @@ def run_audio_producer(
     When recording_event is cleared, push the buffer (as float32 bytes) to audio_queue and clear buffer.
     Stop when stop_event is set.
     """
-    vad = webrtcvad.Vad(vad_aggressiveness)
+    vad = webrtcvad.Vad(vad_aggressiveness) if webrtcvad else None
     chunk_samples = sample_rate * chunk_duration_ms // 1000
     chunk_bytes = chunk_samples * SAMPLE_WIDTH
     pa = pyaudio.PyAudio()
