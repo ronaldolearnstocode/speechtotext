@@ -2,14 +2,23 @@
 
 from __future__ import annotations
 
+import os
 import struct
+import sys
 import threading
+import time
+from pathlib import Path
 from queue import Empty, Queue
 
 import numpy as np
 
 # Lazy import to avoid loading heavy model until needed
 _WhisperModel = None
+
+
+# Re-export for callers that import from transcriber
+from speechtotext.cuda_path import get_cuda_bin_path
+
 
 def _get_whisper():
     global _WhisperModel
@@ -37,6 +46,8 @@ def run_transcriber(
     language: str = "en",
     vad_filter: bool = True,
     vad_min_silence_duration_ms: int = 500,
+    report_timing: bool = False,
+    device_label: str = "cpu",
     timeout: float = 1.0,
 ) -> None:
     """
@@ -44,6 +55,11 @@ def run_transcriber(
     transcribe, put text into text_queue. Use timeout on get to check stop_event.
     When vad_filter is True, only speech segments are transcribed (reduces background noise).
     """
+    # On Windows with CUDA, add CUDA bin to DLL search path so cublas64_12.dll etc. can be loaded
+    if device == "cuda" and sys.platform == "win32" and hasattr(os, "add_dll_directory"):
+        cuda_bin = get_cuda_bin_path()
+        if cuda_bin:
+            os.add_dll_directory(cuda_bin)
     WhisperModel = _get_whisper()
     model = WhisperModel(model_name, device=device, compute_type=compute_type)
 
@@ -65,8 +81,20 @@ def run_transcriber(
         if vad_filter:
             transcribe_kw["vad_filter"] = True
             transcribe_kw["vad_parameters"] = dict(min_silence_duration_ms=vad_min_silence_duration_ms)
-        segments, info = model.transcribe(audio_f32, **transcribe_kw)
-        text = " ".join(s.text for s in segments).strip()
+        t0 = time.perf_counter() if report_timing else None
+        try:
+            segments, info = model.transcribe(audio_f32, **transcribe_kw)
+            text = " ".join(s.text for s in segments).strip()
+        except RuntimeError as e:
+            err = str(e).lower()
+            if "cublas" in err or "cuda" in err or ".dll" in err or "not found" in err:
+                print("[transcriber] GPU/CUDA error:", e)
+                print("[transcriber] This build expects CUDA 12 (cublas64_12.dll). If you have only CUDA 13, install CUDA 12 alongside or use --cpu.")
+                break
+            raise
+        if report_timing and t0 is not None:
+            elapsed = time.perf_counter() - t0
+            print(f"Transcription ({device_label}): {elapsed:.2f} s")
         if text:
             text_queue.put(text)
 
@@ -81,6 +109,8 @@ def start_transcriber_thread(
     language: str = "en",
     vad_filter: bool = True,
     vad_min_silence_duration_ms: int = 500,
+    report_timing: bool = False,
+    device_label: str = "cpu",
 ) -> threading.Thread:
     """Start Thread C. Model is loaded inside the thread to avoid blocking main."""
     thread = threading.Thread(
@@ -95,6 +125,8 @@ def start_transcriber_thread(
             "language": language,
             "vad_filter": vad_filter,
             "vad_min_silence_duration_ms": vad_min_silence_duration_ms,
+            "report_timing": report_timing,
+            "device_label": device_label,
         },
         name="Transcriber",
         daemon=True,
