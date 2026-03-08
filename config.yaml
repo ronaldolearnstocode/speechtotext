@@ -16,6 +16,14 @@ compute_type: "int8"
 sample_rate: 16000
 chunk_duration_ms: 30
 vad_aggressiveness: 2  # 0-3, higher = more aggressive silence detection
+# Reduce background noise: only transcribe segments detected as speech (rain, fan, etc.)
+vad_filter: true
+vad_min_silence_duration_ms: 500  # ms of silence to treat as non-speech; increase (e.g. 800) if still noisy
+# Optional: only keep mic frames classified as speech (requires webrtcvad); can cut quiet speech
+vad_filter_capture: false
 
 # Text injection delay between keystrokes (seconds); 0 for fast injection
 type_interval: 0.02
+
+# Tray: show status window when app starts (only when tray is enabled)
+show_window_on_start: false

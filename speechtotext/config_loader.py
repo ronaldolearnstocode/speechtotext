@@ -20,7 +20,11 @@ _DEFAULTS = {
     "sample_rate": 16000,
     "chunk_duration_ms": 30,
     "vad_aggressiveness": 2,
+    "vad_filter": True,
+    "vad_min_silence_duration_ms": 500,
+    "vad_filter_capture": False,
     "type_interval": 0.02,
+    "show_window_on_start": False,
 }
 
 

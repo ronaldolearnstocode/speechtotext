@@ -61,7 +61,13 @@ python main.py --config path/to/config.yaml
 
 - **Hold** the hotkey (default: **Ctrl+Windows**) to record from your microphone.
 - **Release** the hotkey to stop recording; the clip is transcribed and then typed into the window that has focus (e.g. editor, chat, form).
-- **Ctrl+C** in the terminal to exit.
+- **Ctrl+C** in the terminal to exit (or use the **quit hotkey**, default **Ctrl+Shift+Q**, or **Quit** from the tray menu).
+
+By default the app shows a **system tray icon**. Right‑click it for **Show window** / **Hide window** or **Quit**. Use `--no-tray` to run without the tray (e.g. in a server or headless environment):
+
+```bash
+python main.py --no-tray
+```
 
 To see if the hotkey is detected, run with `--debug`:
 ```bash
@@ -85,6 +91,8 @@ Edit `config.yaml` in the project root (or pass `--config` to another file):
 | `chunk_duration_ms` | Audio frame size | `30` |
 | `vad_aggressiveness` | 0–3, silence detection | `2` |
 | `type_interval` | Delay between keystrokes (s) | `0.02` |
+| `quit_hotkey` | Hotkey to exit the app | `ctrl+shift+q` |
+| `show_window_on_start` | Show status window at startup (tray only) | `false` |
 
 Environment overrides: `STT_MODEL`, `STT_DEVICE` (optional).
 

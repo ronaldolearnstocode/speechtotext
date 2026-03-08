@@ -35,11 +35,14 @@ def run_transcriber(
     device: str = "cpu",
     compute_type: str = "int8",
     language: str = "en",
+    vad_filter: bool = True,
+    vad_min_silence_duration_ms: int = 500,
     timeout: float = 1.0,
 ) -> None:
     """
     Load Whisper model once, then loop: get (raw_bytes, sample_rate) from audio_queue,
     transcribe, put text into text_queue. Use timeout on get to check stop_event.
+    When vad_filter is True, only speech segments are transcribed (reduces background noise).
     """
     WhisperModel = _get_whisper()
     model = WhisperModel(model_name, device=device, compute_type=compute_type)
@@ -55,7 +58,14 @@ def run_transcriber(
         if not raw_bytes:
             continue
         audio_f32 = _bytes_to_f32(raw_bytes)
-        segments, info = model.transcribe(audio_f32, language=language, beam_size=1)
+        transcribe_kw: dict = {
+            "language": language,
+            "beam_size": 1,
+        }
+        if vad_filter:
+            transcribe_kw["vad_filter"] = True
+            transcribe_kw["vad_parameters"] = dict(min_silence_duration_ms=vad_min_silence_duration_ms)
+        segments, info = model.transcribe(audio_f32, **transcribe_kw)
         text = " ".join(s.text for s in segments).strip()
         if text:
             text_queue.put(text)
@@ -69,6 +79,8 @@ def start_transcriber_thread(
     device: str = "cpu",
     compute_type: str = "int8",
     language: str = "en",
+    vad_filter: bool = True,
+    vad_min_silence_duration_ms: int = 500,
 ) -> threading.Thread:
     """Start Thread C. Model is loaded inside the thread to avoid blocking main."""
     thread = threading.Thread(
@@ -81,6 +93,8 @@ def start_transcriber_thread(
             "device": device,
             "compute_type": compute_type,
             "language": language,
+            "vad_filter": vad_filter,
+            "vad_min_silence_duration_ms": vad_min_silence_duration_ms,
         },
         name="Transcriber",
         daemon=True,

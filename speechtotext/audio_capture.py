@@ -39,13 +39,16 @@ def run_audio_producer(
     sample_rate: int = SAMPLE_RATE,
     chunk_duration_ms: int = 30,
     vad_aggressiveness: int = 2,
+    vad_filter_capture: bool = False,
 ) -> None:
     """
     Run in a dedicated thread. While recording_event is set, capture audio and buffer it.
-    When recording_event is cleared, push the buffer (as float32 bytes) to audio_queue and clear buffer.
+    When recording_event is cleared, push the buffer to audio_queue and clear buffer.
+    When vad_filter_capture is True and webrtcvad is available, only frames classified as speech are kept (reduces background noise).
     Stop when stop_event is set.
     """
     vad = webrtcvad.Vad(vad_aggressiveness) if webrtcvad else None
+    use_vad_filter = vad_filter_capture and vad is not None
     chunk_samples = sample_rate * chunk_duration_ms // 1000
     chunk_bytes = chunk_samples * SAMPLE_WIDTH
     pa = pyaudio.PyAudio()
@@ -61,7 +64,6 @@ def run_audio_producer(
             frames_per_buffer=chunk_samples,
         )
     except Exception as e:
-        # Push sentinel or let main handle it
         raise RuntimeError(f"Failed to open microphone: {e}") from e
 
     try:
@@ -72,8 +74,11 @@ def run_audio_producer(
                 except Exception:
                     break
                 if len(data) == chunk_bytes:
-                    # Optional: run VAD; we still collect all frames and push on release
-                    buffer.append(data)
+                    if use_vad_filter:
+                        if vad.is_speech(data, sample_rate):
+                            buffer.append(data)
+                    else:
+                        buffer.append(data)
             else:
                 # Not recording: if we have buffered audio, push it and clear
                 if buffer:
@@ -103,6 +108,7 @@ def start_audio_thread(
     sample_rate: int = SAMPLE_RATE,
     chunk_duration_ms: int = 30,
     vad_aggressiveness: int = 2,
+    vad_filter_capture: bool = False,
 ) -> threading.Thread:
     """Start Thread B. Returns the thread (already started)."""
     thread = threading.Thread(
@@ -114,6 +120,7 @@ def start_audio_thread(
             "sample_rate": sample_rate,
             "chunk_duration_ms": chunk_duration_ms,
             "vad_aggressiveness": vad_aggressiveness,
+            "vad_filter_capture": vad_filter_capture,
         },
         name="AudioProducer",
         daemon=True,
