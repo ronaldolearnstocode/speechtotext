@@ -10,7 +10,7 @@ This document describes how to build the **zip-distributable** Windows executabl
   pip install -r requirements.txt
   pip install pyinstaller
   ```
-- **Option B (bundle CUDA):** Install [CUDA 12 Toolkit](https://developer.nvidia.com/cuda-downloads) on the build machine. Set **`CUDA_PATH`** to the toolkit root (e.g. `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6`), or leave it unset and the spec will try the default path. All `bin\*.dll` files from that folder are copied into the output so the zip works with GPU without requiring users to install CUDA.
+- **Option B (bundle CUDA):** Install [CUDA 12 Toolkit, not 13 or above](https://developer.nvidia.com/cuda-downloads) on the build machine. Set **`CUDA_PATH`** to the toolkit root (e.g. `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6`), or leave it unset and the spec will try the default path. All `bin\*.dll` files from that folder are copied into the output so the zip works with GPU without requiring users to install CUDA.
 
 ## Build steps
 
