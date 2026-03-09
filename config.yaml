@@ -27,3 +27,50 @@ type_interval: 0.02
 
 # Tray: show status window when app starts (only when tray is enabled)
 show_window_on_start: false
+
+# Assistant (Phase 3)
+# If true, text that starts with a wake word goes to local AI instead of being typed.
+assistant_enabled: true
+
+# Wake-word routing map (start-of-phrase only):
+# - "jarvis" -> local Ollama (active in phase 3)
+# - "mother" -> Gemini (reserved for phase 4; disabled by default below)
+assistant_wake_word_map:
+  jarvis: "ollama"
+  mother: "gemini"
+
+# Enable/disable providers independently
+assistant_provider_enabled:
+  ollama: true
+  gemini: false
+
+# Work mode keeps memory lower; quality mode uses larger model
+assistant_mode: "work"  # work | quality
+assistant_model_work: "qwen2.5-coder:7b"
+assistant_model_quality: "qwen2.5-coder:14b"
+assistant_ollama_host: "http://127.0.0.1:11434"
+assistant_timeout_s: 60
+assistant_temperature: 0.3
+assistant_max_tokens: 256
+# Early wake detection (while hotkey is still held):
+# if wake word is detected in this first audio window, a quick beep is played immediately.
+assistant_partial_wake_enabled: true
+assistant_partial_wake_first_window_ms: 1000
+
+# TTS
+# provider: "windows" (built-in) or "piper" (Jarvis-like if you configure a piper male voice model)
+assistant_tts_provider: "windows"
+assistant_tts_voice: "male"
+assistant_tts_rate: 0
+assistant_tts_volume: 100
+assistant_tts_piper_path: ""
+assistant_tts_piper_model: ""
+
+# Assistant output window ("post-it"-style):
+# full response is shown in a resizable/selectable window so you copy only what you want.
+assistant_output_window_enabled: true
+assistant_output_window_topmost: false
+
+# Audio strategy: speak only a short headline instead of the full long response.
+assistant_voice_summary_only: true
+assistant_voice_summary_max_chars: 160
