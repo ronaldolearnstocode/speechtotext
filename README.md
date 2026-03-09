@@ -133,6 +133,19 @@ For **`--gpu`** on Windows you need the [CUDA 12 Toolkit](https://developer.nvid
 2. In a **new** terminal, run `where cublas64_12.dll`. If it prints a path, the shell can find the DLL; run the app from that same terminal (`python main.py --gpu`). If `where` finds nothing, add the CUDA 12 `bin` folder to PATH in System Environment Variables and restart the terminal (and Cursor if you launch from it).
 3. If it still fails, use `--cpu` for this run; the app will print a short message when the CUDA path is not found so you can fix PATH or `CUDA_PATH`.
 
+## Running the executable (zip distribution)
+
+Pre-built or self-built standalone builds are distributed as a **zip**. No install: unzip and run.
+
+1. **Unzip** the archive (e.g. `SpeechToText-v1.0.zip`) into a folder.
+2. **Optional:** Edit `config.yaml` in that folder to change hotkey, model, device, etc.
+3. **Run** `SpeechToText.exe` (double-click or from a terminal). The first run may download the Whisper model.
+4. **CLI options** work as with `python main.py`: `--cpu`, `--gpu`, `--no-tray`, `--config path\to\config.yaml`, `--debug`.
+
+**GPU (Option B build):** If the zip was built with CUDA runtime DLLs bundled, `--gpu` works without installing the CUDA Toolkit; an NVIDIA driver is still required. Otherwise, install [CUDA 12](https://developer.nvidia.com/cuda-downloads) and add its `bin` folder to PATH (or set `CUDA_PATH`) for GPU support.
+
+To **build** the zip yourself, see [BUILD.md](BUILD.md).
+
 ## Phase 2 (future)
 
 - **GPU**: Use NVIDIA GPU (e.g. CUDA) for sub-second inference.

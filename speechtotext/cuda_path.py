@@ -14,11 +14,20 @@ _CUDA_13_DLL = "cublas64_13.dll"
 def get_cuda_bin_path() -> str | None:
     """
     Return a CUDA bin directory for DLL search (Windows), or None if not found.
-    Prefers a path that contains cublas64_12.dll (CUDA 12), then cublas64_13.dll (CUDA 13).
+    When running as a frozen exe (PyInstaller), looks first in the executable's
+    directory for bundled CUDA DLLs (Option B build). Otherwise prefers a path
+    that contains cublas64_12.dll (CUDA 12), then cublas64_13.dll (CUDA 13).
     Uses CUDA_PATH, default toolkit path, then PATH.
     """
     if sys.platform != "win32":
         return None
+
+    # Frozen exe: use bundled CUDA DLLs (next to exe or in _internal on PyInstaller 6+)
+    if getattr(sys, "frozen", False):
+        exe_dir = Path(sys.executable).resolve().parent
+        for folder in (exe_dir, Path(getattr(sys, "_MEIPASS", ""))):
+            if folder and ((folder / _CUDA_12_DLL).exists() or (folder / _CUDA_13_DLL).exists()):
+                return str(folder)
 
     def bin_has_dll(bin_path: Path, dll: str) -> bool:
         return bin_path.is_dir() and (bin_path / dll).exists()
