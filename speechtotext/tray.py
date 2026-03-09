@@ -73,18 +73,28 @@ def create_tray_icon(
     pystray = _pystray()
     root_ref: list = []
     tk_thread: threading.Thread | None = None
+    tk_start_lock = threading.Lock()
+
+    def ensure_tk_thread(start_visible: bool = False) -> None:
+        nonlocal tk_thread
+        with tk_start_lock:
+            if tk_thread is not None and tk_thread.is_alive():
+                return
+            tk_thread = threading.Thread(
+                target=_run_tk_window,
+                args=(root_ref, start_visible),
+                daemon=True,
+            )
+            tk_thread.start()
 
     if show_window_on_start:
-        tk_thread = threading.Thread(target=_run_tk_window, args=(root_ref, True), daemon=True)
-        tk_thread.start()
-    else:
-        tk_thread = threading.Thread(target=_run_tk_window, args=(root_ref, False), daemon=True)
-        tk_thread.start()
+        ensure_tk_thread(start_visible=True)
 
     def get_root():
         return root_ref[0] if root_ref else None
 
     def on_show_window(icon: "pystray.Icon") -> None:
+        ensure_tk_thread(start_visible=True)
         root = get_root()
         if root is not None:
             try:
@@ -93,6 +103,7 @@ def create_tray_icon(
                 pass
 
     def on_hide_window(icon: "pystray.Icon") -> None:
+        ensure_tk_thread(start_visible=False)
         root = get_root()
         if root is not None:
             try:

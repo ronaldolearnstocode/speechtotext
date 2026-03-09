@@ -84,6 +84,25 @@ python main.py --gpu
 
 Keep the target application focused so the text is inserted at the cursor.
 
+### Local assistant wake word (Phase 3)
+
+You can route speech to local AI (instead of typing) by starting with a wake word:
+
+- `command ...` -> local Ollama provider (active)
+- `mother ...` -> reserved for phase 4 cloud provider mapping (disabled by default)
+
+Examples:
+
+- `command write a SQL window function for running total`
+- `command explain this Python traceback`
+
+Behavior rules:
+
+- Wake word must be at the **start** of the transcribed sentence.
+- If the wake word appears in the middle, text is treated as normal dictation and typed.
+- The assistant speaks responses through TTS (`assistant_tts_provider` in `config.yaml`).
+- While AI is speaking, hold and release the hotkey (`Ctrl+Alt` by default); speech stops on release.
+
 ## Configuration
 
 Edit `config.yaml` in the project root (or pass `--config` to another file):
@@ -100,6 +119,13 @@ Edit `config.yaml` in the project root (or pass `--config` to another file):
 | `type_interval` | Delay between keystrokes (s) | `0.02` |
 | `quit_hotkey` | Hotkey to exit the app | `ctrl+shift+q` |
 | `show_window_on_start` | Show status window at startup (tray only) | `false` |
+| `assistant_enabled` | Enable wake-word assistant routing | `true` |
+| `assistant_wake_word_map` | Wake-word to provider map | `{command: ollama, mother: gemini}` |
+| `assistant_provider_enabled` | Provider enable flags | `{ollama: true, gemini: false}` |
+| `assistant_mode` | `work` (lighter) or `quality` (stronger) | `work` |
+| `assistant_model_work` | Local model in work mode | `qwen2.5-coder:7b` |
+| `assistant_model_quality` | Local model in quality mode | `qwen2.5-coder:14b` |
+| `assistant_tts_provider` | `windows` or `piper` | `windows` |
 
 Environment overrides: `STT_MODEL`, `STT_DEVICE` (optional).
 
