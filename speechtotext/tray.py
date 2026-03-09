@@ -21,19 +21,20 @@ def _pystray():
     return _icon_module
 
 
-def create_icon_image(size: int = 64) -> "Image.Image":
-    """Create a simple tray icon (mic-style circle with 'STT') using Pillow."""
+def create_icon_image(size: int = 64, ready: bool = True) -> "Image.Image":
+    """Create tray icon: green circle when ready, red when loading. Mic-style with 'STT' dots."""
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    # Circle background (blue)
     margin = size // 8
-    d.ellipse([margin, margin, size - margin, size - margin], fill=(60, 120, 200), outline=(40, 90, 160))
-    # Small "STT" text (white) - simplified as a dot/bar for very small sizes
+    if ready:
+        fill, outline = (40, 180, 80), (30, 140, 60)   # green
+    else:
+        fill, outline = (200, 60, 60), (160, 40, 40)    # red
+    d.ellipse([margin, margin, size - margin, size - margin], fill=fill, outline=outline)
     if size >= 32:
         try:
-            # Draw "STT" with default font; fallback to minimal shape if no font
             cx, cy = size // 2, size // 2
-            for i, (dx, dy) in enumerate([(-8, -6), (0, 0), (8, 6)]):
+            for dx, dy in [(-8, -6), (0, 0), (8, 6)]:
                 d.ellipse([cx + dx - 4, cy + dy - 4, cx + dx + 4, cy + dy + 4], fill=(255, 255, 255))
         except Exception:
             d.ellipse([size // 4, size // 4, 3 * size // 4, 3 * size // 4], fill=(255, 255, 255))
@@ -63,17 +64,20 @@ def _run_tk_window(root_ref: list, show_on_start: bool) -> None:
 def create_tray_icon(
     stop_event: threading.Event,
     show_window_on_start: bool = False,
+    device_state: dict | None = None,
+    reload_event: threading.Event | None = None,
+    menu_update_callback_ref: list | None = None,
+    cuda_available: bool = False,
 ) -> "pystray.Icon":
-    """Create a pystray icon with menu (Show window, Hide window, Quit). Optional tkinter window."""
+    """Create tray icon with Show/Hide, Use CPU/GPU (radio), Quit. Red icon until ready, then green."""
     pystray = _pystray()
-    root_ref: list = []  # [tk.Tk] when window is used
+    root_ref: list = []
     tk_thread: threading.Thread | None = None
 
     if show_window_on_start:
         tk_thread = threading.Thread(target=_run_tk_window, args=(root_ref, True), daemon=True)
         tk_thread.start()
     else:
-        # Still create the window so "Show window" works; start hidden
         tk_thread = threading.Thread(target=_run_tk_window, args=(root_ref, False), daemon=True)
         tk_thread.start()
 
@@ -106,15 +110,58 @@ def create_tray_icon(
                 pass
         icon.stop()
 
-    menu = pystray.Menu(
+    use_device_toggle = device_state is not None and reload_event is not None
+
+    def on_use_cpu(icon: "pystray.Icon") -> None:
+        if not use_device_toggle or not device_state:
+            return
+        device_state["device"] = "cpu"
+        device_state["compute_type"] = "int8"
+        reload_event.set()
+        if menu_update_callback_ref and menu_update_callback_ref[0]:
+            menu_update_callback_ref[0]()
+
+    def on_use_gpu(icon: "pystray.Icon") -> None:
+        if not use_device_toggle or not device_state:
+            return
+        device_state["device"] = "cuda"
+        device_state["compute_type"] = "float16"
+        reload_event.set()
+        if menu_update_callback_ref and menu_update_callback_ref[0]:
+            menu_update_callback_ref[0]()
+
+    def is_gpu_checked(_: object) -> bool:
+        return bool(device_state and device_state.get("device") == "cuda")
+
+    def is_cpu_checked(_: object) -> bool:
+        return bool(not device_state or device_state.get("device") != "cuda")
+
+    menu_items = [
         pystray.MenuItem("Show window", on_show_window, default=True),
         pystray.MenuItem("Hide window", on_hide_window),
-        pystray.Menu.SEPARATOR,
-        pystray.MenuItem("Quit", on_quit),
-    )
+    ]
+    if use_device_toggle:
+        menu_items.append(pystray.Menu.SEPARATOR)
+        menu_items.append(
+            pystray.MenuItem("Use CPU", on_use_cpu, radio=True, checked=is_cpu_checked)
+        )
+        menu_items.append(
+            pystray.MenuItem(
+                "Use GPU",
+                on_use_gpu,
+                radio=True,
+                checked=is_gpu_checked,
+                enabled=cuda_available,
+            )
+        )
+    menu_items.append(pystray.Menu.SEPARATOR)
+    menu_items.append(pystray.MenuItem("Quit", on_quit))
+
+    menu = pystray.Menu(*menu_items)
+    # Start red (not ready); transcriber will set green when model is loaded
     icon = pystray.Icon(
         "speechtotext",
-        create_icon_image(64),
+        create_icon_image(64, ready=False),
         "Speech-to-Text",
         menu,
     )

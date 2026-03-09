@@ -14,8 +14,9 @@ import threading
 from pathlib import Path
 from queue import Queue
 
-# Add project root so speechtotext package is importable
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+# Add project root so speechtotext package is importable (not needed when frozen)
+if not getattr(sys, "frozen", False):
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 # Parse args and add CUDA bin to DLL path *before* importing transcriber (which pulls in numpy/ctranslate2)
 parser = argparse.ArgumentParser(description="Speech-to-Text: hold hotkey to record, release to transcribe.")
@@ -78,6 +79,9 @@ def main() -> int:
     text_queue: Queue = Queue()
     recording_event = threading.Event()
     stop_event = threading.Event()
+    device_state = {"device": device, "compute_type": compute_type}
+    reload_event = threading.Event()
+    cuda_available = bool(get_cuda_bin_path()) if sys.platform == "win32" else False
 
     def on_press() -> None:
         recording_event.set()
@@ -91,9 +95,28 @@ def main() -> int:
 
     tray_icon = None
     tray_thread: threading.Thread | None = None
+    on_ready_changed_ref: list = [lambda _: None]
+    on_device_changed_ref: list = [lambda: None]
+
     if not args.no_tray:
-        from speechtotext.tray import create_tray_icon
-        tray_icon = create_tray_icon(stop_event, show_window_on_start=show_window_on_start)
+        from speechtotext.tray import create_tray_icon, create_icon_image
+        menu_update_callback_ref = [None]
+        tray_icon = create_tray_icon(
+            stop_event,
+            show_window_on_start=show_window_on_start,
+            device_state=device_state,
+            reload_event=reload_event,
+            menu_update_callback_ref=menu_update_callback_ref,
+            cuda_available=cuda_available,
+        )
+        menu_update_callback_ref[0] = lambda: tray_icon.update_menu()
+        def _on_ready(ready: bool) -> None:
+            try:
+                tray_icon.icon = create_icon_image(64, ready=ready)
+            except Exception:
+                pass
+        on_ready_changed_ref[0] = _on_ready
+        on_device_changed_ref[0] = lambda: tray_icon.update_menu()
         tray_thread = threading.Thread(target=tray_icon.run, daemon=True)
         tray_thread.start()
 
@@ -118,6 +141,10 @@ def main() -> int:
         vad_min_silence_duration_ms=vad_min_silence_duration_ms,
         report_timing=args.cpu or args.gpu,
         device_label=device,
+        device_state=device_state,
+        reload_event=reload_event,
+        on_ready_changed=lambda ready: on_ready_changed_ref[0](ready),
+        on_device_changed=lambda: on_device_changed_ref[0](),
     )
     t_injector = start_injector_thread(
         text_queue=text_queue,
@@ -147,7 +174,7 @@ def main() -> int:
     if args.cpu or args.gpu:
         print(f"Device: {device} ({compute_type}). Per-transcription time will be printed.")
     if not args.no_tray:
-        print("Tray icon active: right-click for Show/Hide window or Quit.")
+        print("Tray icon active: green = ready, red = loading. Right-click for Show/Hide, Use CPU/GPU, or Quit.")
     if debug:
         print("[debug] If hotkey does nothing, try: Run terminal as Administrator (Windows needs this for global hotkeys).")
     t_hotkey.join()

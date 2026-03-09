@@ -6,6 +6,8 @@ import os
 from pathlib import Path
 from typing import Any
 
+from speechtotext.paths import get_app_root, get_bundle_root
+
 try:
     import yaml
 except ImportError:
@@ -32,7 +34,9 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     """Load config from YAML file, with env override and defaults."""
     config = dict(_DEFAULTS)
     if path is None:
-        path = Path(__file__).resolve().parent.parent / "config.yaml"
+        path = get_app_root() / "config.yaml"
+        if not path.exists():
+            path = get_bundle_root() / "config.yaml"
     path = Path(path)
     if path.exists() and yaml is not None:
         with open(path, encoding="utf-8") as f:
