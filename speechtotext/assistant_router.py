@@ -5,6 +5,7 @@ from __future__ import annotations
 import threading
 from queue import Empty, Queue
 
+from speechtotext.assistant_worker import _append_speech_to_text_log
 from speechtotext.tts import play_ack_beep
 
 
@@ -61,6 +62,7 @@ def run_router(
     wake_word_map: dict | None,
     early_wake_beep_event: threading.Event | None = None,
     device_state: dict | None = None,
+    log_dir=None,
     timeout: float = 1.0,
     debug: bool = False,
 ) -> None:
@@ -76,6 +78,8 @@ def run_router(
             break
         if not isinstance(text, str) or not text.strip():
             continue
+        if log_dir is not None:
+            _append_speech_to_text_log(log_dir, text)
 
         assistant_active = assistant_enabled and not (
             device_state is not None and device_state.get("device") == "cpu"
@@ -116,6 +120,7 @@ def start_router_thread(
     wake_word_map: dict | None,
     early_wake_beep_event: threading.Event | None = None,
     device_state: dict | None = None,
+    log_dir=None,
     debug: bool = False,
 ) -> threading.Thread:
     thread = threading.Thread(
@@ -129,6 +134,7 @@ def start_router_thread(
             "wake_word_map": wake_word_map,
             "early_wake_beep_event": early_wake_beep_event,
             "device_state": device_state,
+            "log_dir": log_dir,
             "timeout": 1.0,
             "debug": debug,
         },

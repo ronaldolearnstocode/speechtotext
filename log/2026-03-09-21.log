@@ -1,0 +1,101 @@
+[21:01:44] Cloud AI
+Q: how are you?
+A:
+No AI available. Tried: gemini. Skipped: claude (no API key), groq (no API key).
+------------------------------------------------------------------------
+
+[21:02:57] Cloud AI
+Q: how are you?
+A:
+No AI available. Tried: gemini. Skipped: claude (no API key), groq (no API key). Last error: Gemini API error: You exceeded your current quota, please check your plan and billing details. For more information on t...
+------------------------------------------------------------------------
+
+[21:10:04] local ai
+Q: Hello?
+A:
+Hello! How can I assist you today?
+------------------------------------------------------------------------
+
+[21:10:13] Cloud AI
+Q: Hello.
+A:
+No AI available. Tried: gemini, groq. Skipped: claude (no API key). Last error: Groq API error: HTTP Error 403: Forbidden
+------------------------------------------------------------------------
+
+[21:12:19] Cloud AI
+Q: Hello.
+A:
+No AI available. Tried: groq. Skipped: gemini (no API key), claude (no API key). Last error: Groq API error: HTTP Error 403: Forbidden
+------------------------------------------------------------------------
+
+[21:18:52] groq
+Q: how are you?
+A:
+I'm doing well, thank you for asking. I'm a computer program designed to assist and communicate with users, so I don't have feelings or emotions like humans do. However, I'm always ready and happy to help answer your questions, provide information, and assist with tasks to the best of my abilities. How can I help you today?
+------------------------------------------------------------------------
+
+[21:25:11] groq
+Q: which AI are you?
+A:
+I am Mother, a helpful voice assistant, but my technology is based on a language model similar to those used by other popular AI assistants. My responses are generated using a combination of natural language processing (NLP) and machine learning algorithms, which allow me to understand and respond to a wide range of questions and topics.
+
+While I don't have a specific name like some other AI assistants, such as Siri, Alexa, or Google Assistant, my functionality and capabilities are similar. I can provide information, answer questions, and engage in conversation on a variety of subjects, from science and history to entertainment and culture.
+
+Some of the key features of my technology include:
+
+* Natural language understanding: I can comprehend and interpret human language, including nuances and context.
+* Knowledge retrieval: I have access to a vast database of information, which I can draw upon to answer questions and provide information.
+* Generation: I can generate human-like text responses to questions and prompts.
+* Conversation management: I can engage in multi-turn conversations, using context and understanding to respond to follow-up questions and statements.
+
+Overall, my goal is to provide helpful and accurate information, while also being engaging and easy to interact with.
+------------------------------------------------------------------------
+
+[21:44:42] local ai
+Q: hello.
+A:
+Hello! How can I assist you today?
+------------------------------------------------------------------------
+
+[21:44:57] Cloud AI
+Q: Hello.
+A:
+No AI available. Skipped: gemini (no API key), claude (no API key), groq (no API key).
+------------------------------------------------------------------------
+
+[21:48:27] local ai
+Q: I like you.
+A:
+Thank you! How can I assist you today?
+------------------------------------------------------------------------
+
+[21:48:38] Cloud AI
+Q: I like you.
+A:
+No AI available. Skipped: gemini (no API key), claude (no API key), groq (no API key).
+------------------------------------------------------------------------
+
+[21:51:01] local ai
+Q: Hello, man.
+A:
+Hello! How can I assist you today?
+------------------------------------------------------------------------
+
+[21:51:07] groq
+Q: Hello.
+A:
+Hello. It's nice to meet you. Is there something I can help you with or would you like to chat? I'm here to assist you with any questions or tasks you may have.
+------------------------------------------------------------------------
+
+[21:57:44] local ai
+Q: Can you hear me?
+A:
+Yes, I can hear you. How can I assist you today?
+------------------------------------------------------------------------
+
+[21:57:50] groq
+Q: hello.
+A:
+Hello. It's nice to meet you. Is there something I can help you with or would you like to chat? I'm here to assist you with any questions or topics you'd like to discuss.
+------------------------------------------------------------------------
+

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import threading
+import time
+from queue import Empty, Queue
 from typing import TYPE_CHECKING
 
 from PIL import Image, ImageDraw
@@ -41,20 +43,103 @@ def create_icon_image(size: int = 64, ready: bool = True) -> "Image.Image":
     return img
 
 
-def _run_tk_window(root_ref: list, show_on_start: bool) -> None:
-    """Run tkinter status window in a dedicated thread (create + mainloop)."""
+def _run_tk_window(
+    root_ref: list,
+    show_on_start: bool,
+    output_queue: Queue | None = None,
+    stop_event: threading.Event | None = None,
+    always_on_top: bool = False,
+    poll_ms: int = 120,
+) -> None:
+    """Run tkinter status window (with optional assistant answers area) in a dedicated thread."""
     import tkinter as tk
+    from tkinter import ttk
+
     root = tk.Tk()
     root.title("Speech-to-Text")
-    root.resizable(False, False)
+    root.resizable(True, True)
+    root.minsize(400, 300)
+    root.geometry("920x600")
+    root.attributes("-topmost", bool(always_on_top))
     root.withdraw()
-    frame = tk.Frame(root, padx=24, pady=16)
-    frame.pack()
-    tk.Label(frame, text="Speech-to-Text is running", font=("Segoe UI", 12)).pack(pady=(0, 8))
-    tk.Label(frame, text="Hold hotkey to record, release to transcribe.", font=("Segoe UI", 9)).pack(pady=(0, 12))
+    root.protocol("WM_DELETE_WINDOW", root.withdraw)
+
+    header = ttk.Frame(root, padding=(10, 8))
+    header.pack(side=tk.TOP, fill=tk.X)
+    ttk.Label(header, text="Speech-to-Text – Assistant answers", font=("Segoe UI", 10)).pack(side=tk.LEFT)
+
     def minimize_to_tray() -> None:
         root.withdraw()
-    tk.Button(frame, text="Minimize to tray", command=minimize_to_tray).pack()
+
+    ttk.Button(header, text="Minimize to tray", command=minimize_to_tray).pack(side=tk.RIGHT, padx=(8, 0))
+
+    if output_queue is not None:
+        body = ttk.Frame(root, padding=(10, 0, 10, 10))
+        body.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        def _copy_all() -> None:
+            txt = text.get("1.0", "end-1c")
+            if not txt.strip():
+                return
+            root.clipboard_clear()
+            root.clipboard_append(txt)
+
+        def _clear() -> None:
+            text.delete("1.0", tk.END)
+
+        ttk.Button(header, text="Copy all", command=_copy_all).pack(side=tk.RIGHT, padx=(8, 0))
+        ttk.Button(header, text="Clear", command=_clear).pack(side=tk.RIGHT)
+
+        text = tk.Text(body, wrap=tk.WORD, undo=False)
+        scroll = ttk.Scrollbar(body, orient=tk.VERTICAL, command=text.yview)
+        text.configure(yscrollcommand=scroll.set)
+        text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        def _append_message(msg: dict) -> None:
+            prompt = str(msg.get("prompt", "")).strip()
+            response = str(msg.get("response", "")).strip()
+            provider = str(msg.get("provider_used", msg.get("provider", ""))).strip() or "assistant"
+            if not response:
+                return
+            stamp = time.strftime("%H:%M:%S")
+            text.insert(tk.END, f"[{stamp}] {provider}\n")
+            if prompt:
+                text.insert(tk.END, f"Q: {prompt}\n")
+            text.insert(tk.END, "A:\n")
+            text.insert(tk.END, response + "\n")
+            text.insert(tk.END, "-" * 72 + "\n\n")
+            text.see(tk.END)
+            root.deiconify()
+            root.lift()
+
+        def _poll() -> None:
+            if stop_event is not None and stop_event.is_set():
+                try:
+                    root.destroy()
+                except Exception:
+                    pass
+                return
+            if output_queue is not None:
+                try:
+                    while True:
+                        item = output_queue.get_nowait()
+                        if item is None:
+                            continue
+                        if isinstance(item, dict):
+                            _append_message(item)
+                except Empty:
+                    pass
+            root.after(max(30, int(poll_ms)), _poll)
+
+        root.after(0, _poll)
+    else:
+        frame = tk.Frame(root, padx=24, pady=16)
+        frame.pack()
+        tk.Label(frame, text="Speech-to-Text is running", font=("Segoe UI", 12)).pack(pady=(0, 8))
+        tk.Label(frame, text="Hold hotkey to record, release to transcribe.", font=("Segoe UI", 9)).pack(pady=(0, 12))
+        tk.Button(frame, text="Minimize to tray", command=minimize_to_tray).pack()
+
     root_ref.append(root)
     if show_on_start:
         root.after(0, root.deiconify)
@@ -68,6 +153,8 @@ def create_tray_icon(
     reload_event: threading.Event | None = None,
     menu_update_callback_ref: list | None = None,
     cuda_available: bool = False,
+    assistant_output_queue: Queue | None = None,
+    assistant_output_window_topmost: bool = False,
 ) -> "pystray.Icon":
     """Create tray icon with Show/Hide, Use CPU/GPU (radio), Quit. Red icon until ready, then green."""
     pystray = _pystray()
@@ -82,7 +169,13 @@ def create_tray_icon(
                 return
             tk_thread = threading.Thread(
                 target=_run_tk_window,
-                args=(root_ref, start_visible),
+                args=(
+                    root_ref,
+                    start_visible,
+                    assistant_output_queue,
+                    stop_event,
+                    assistant_output_window_topmost,
+                ),
                 daemon=True,
             )
             tk_thread.start()

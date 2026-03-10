@@ -57,7 +57,7 @@ def run_output_window(
     def _append_message(msg: dict) -> None:
         prompt = str(msg.get("prompt", "")).strip()
         response = str(msg.get("response", "")).strip()
-        provider = str(msg.get("provider", "")).strip() or "assistant"
+        provider = str(msg.get("provider_used", msg.get("provider", ""))).strip() or "assistant"
         if not response:
             return
         stamp = time.strftime("%H:%M:%S")
