@@ -9,8 +9,8 @@ quit_hotkey: "ctrl+shift+q"
 
 # Whisper model (large-v3 recommended for accuracy; large-v2 for less RAM)
 model_name: "large-v3"
-device: "cpu"
-compute_type: "int8"
+device: "cuda"
+compute_type: "float16"
 
 # Audio: 16 kHz mono for Whisper
 sample_rate: 16000
@@ -33,16 +33,31 @@ show_window_on_start: false
 assistant_enabled: true
 
 # Wake-word routing map (start-of-phrase only):
-# - "jarvis" -> local Ollama (active in phase 3)
-# - "mother" -> Gemini (reserved for phase 4; disabled by default below)
+# - "jarvis" -> Local AI (active in phase 3)
+# - "mother" -> Cloud AI (female voice: set Mother TTS paths below)
 assistant_wake_word_map:
-  jarvis: "ollama"
-  mother: "gemini"
+  jarvis: "Local AI"
+  mother: "Cloud AI"
 
 # Enable/disable providers independently
 assistant_provider_enabled:
-  ollama: true
-  gemini: false
+  Local AI: true
+  Cloud AI: true
+
+# Mother: cloud AI fallback order (first success wins). Keys only from Windows env: GEMINI_CLOUD_AI, CLAUDE_CLOUD_AI, GROQ_CLOUD_AI.
+cloud_ai_priority: [gemini, claude, groq]
+
+# Mother (Cloud AI) model and instructions; key from env GEMINI_CLOUD_AI only.
+assistant_Cloud AI_model: "Cloud AI-2.5-flash"
+# System instruction: file path (relative to app dir) or leave empty; optional inline override below
+assistant_Cloud AI_system_instruction_file: "Cloud AI_mother_instruction.txt"
+assistant_Cloud AI_system_instruction: ""
+
+# Claude: key from env CLAUDE_CLOUD_AI only.
+assistant_claude_model: "claude-3-5-haiku-20241022"
+
+# Groq: key from env GROQ_CLOUD_AI only.
+assistant_groq_model: "llama-3.3-70b-versatile"
 
 # Work mode keeps memory lower; quality mode uses larger model
 assistant_mode: "work"  # work | quality
@@ -51,7 +66,7 @@ assistant_model_quality: "qwen2.5-coder:14b"
 assistant_ollama_host: "http://127.0.0.1:11434"
 assistant_timeout_s: 60
 assistant_temperature: 0.3
-assistant_max_tokens: 256
+assistant_max_tokens: 2048
 # Early wake detection (while hotkey is still held):
 # if wake word is detected in this first audio window, a quick beep is played immediately.
 assistant_partial_wake_enabled: true
@@ -66,6 +81,14 @@ assistant_tts_volume: 100
 assistant_tts_piper_path: ""
 assistant_tts_piper_model: ""
 
+# Mother (Cloud AI) TTS: female voice (Piper en_US-lessac-high). Jarvis keeps male above.
+assistant_Cloud AI_tts_provider: "piper"
+assistant_Cloud AI_tts_voice: "Zira"
+assistant_Cloud AI_tts_rate: 0
+assistant_Cloud AI_tts_volume: 100
+assistant_Cloud AI_tts_piper_path: ""
+assistant_Cloud AI_tts_piper_model: ""
+
 # Assistant output window ("post-it"-style):
 # full response is shown in a resizable/selectable window so you copy only what you want.
 assistant_output_window_enabled: true
@@ -73,4 +96,6 @@ assistant_output_window_topmost: false
 
 # Audio strategy: speak only a short headline instead of the full long response.
 assistant_voice_summary_only: true
-assistant_voice_summary_max_chars: 160
+assistant_voice_summary_max_chars: 280
+# Mother: when response has this many sentences or more, use a second Cloud AI call to summarize for TTS.
+assistant_Cloud AI_voice_summary_api_min_sentences: 5

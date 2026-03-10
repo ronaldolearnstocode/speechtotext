@@ -1,0 +1,72 @@
+[22:16:43] speech to text
+Transcripted speech: Jarvis.  What time is it now?
+------------------------------------------------------------------------
+
+[22:16:46] local ai
+Q: What time is it now?
+A:
+To find out the current time, you can use a simple command in most operating systems:
+
+- On Windows, press `Win + R`, type `time`, and press Enter.
+- On macOS, press `Command + Space`, type `time`, and press Enter.
+- On Linux, open a terminal and type `date +%T` and press Enter.
+
+For example, on a Linux terminal, you would see something like:
+
+```
+14:30:45
+```
+------------------------------------------------------------------------
+
+[22:16:59] speech to text
+Transcripted speech: Mother, what time is it now?
+------------------------------------------------------------------------
+
+[22:17:03] gemini
+Q: what time is it now?
+A:
+I'm sorry, dear, I don't have a real-time clock I can look at right now. You can usually find the time on your device's screen or by checking your phone.
+------------------------------------------------------------------------
+
+[22:17:47] speech to text
+Transcripted speech: Mother, what is SQL?
+------------------------------------------------------------------------
+
+[22:17:48] groq
+Q: what is SQL?
+A:
+**SQL (Structured Query Language)** is a programming language designed for managing and manipulating data stored in relational database management systems (RDBMS). It is a standard language for accessing, managing, and modifying data in relational databases.
+
+**Key Features of SQL:**
+
+1. **Declarative Language**: SQL is a declarative language, meaning you specify what you want to do with your data, rather than how to do it.
+2. **Querying Data**: SQL allows you to query data from a database using commands such as `SELECT`, `FROM`, `WHERE`, and `JOIN`.
+3. **Data Manipulation**: SQL provides commands for inserting, updating, and deleting data in a database, such as `INSERT`, `UPDATE`, and `DELETE`.
+4. **Data Definition**: SQL allows you to create and modify database structures, such as tables, indexes, and views, using commands like `CREATE`, `ALTER`, and `DROP`.
+
+**Common SQL Commands:**
+
+1. `SELECT`: Retrieves data from a database table.
+2. `INSERT`: Adds new data to a database table.
+3. `UPDATE`: Modifies existing data in a database table.
+4. `DELETE`: Deletes data from a database table.
+5. `CREATE`: Creates a new database table or other database object.
+6. `DROP`: Deletes a database table or other database object.
+
+**SQL Uses:**
+
+1. **Database Administration**: SQL is used to manage and maintain databases, including creating and modifying database structures.
+2. **Data Analysis**: SQL is used to analyze and report on data stored in a database.
+3. **Web Development**: SQL is used to interact with databases in web applications, such as retrieving and storing user data.
+4. **Business Intelligence**: SQL is used to create reports and dashboards to help businesses make informed decisions.
+
+**SQL Variants:**
+
+1. **MySQL**: An open-source RDBMS that uses SQL.
+2. **PostgreSQL**: An open-source RDBMS that uses SQL.
+3. **Microsoft SQL Server**: A commercial RDBMS that uses SQL.
+4. **Oracle**: A commercial RDBMS that uses SQL.
+
+In summary, SQL is a powerful language for managing and manipulating data in relational databases, and is widely used in a variety of applications, including database administration, data analysis, web development, and business intelligence.
+------------------------------------------------------------------------
+

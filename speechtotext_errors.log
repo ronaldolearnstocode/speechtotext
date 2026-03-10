@@ -1,0 +1,117 @@
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing AvifImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing BlpImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing BmpImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing BufrStubImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing CurImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing DcxImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing DdsImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing EpsImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing FitsImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing FliImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing FpxImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Image: failed to import FpxImagePlugin: No module named 'olefile'
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing FtexImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing GbrImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing GifImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing GribStubImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing Hdf5StubImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing IcnsImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing IcoImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing ImImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing ImtImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing IptcImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing JpegImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing Jpeg2KImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing McIdasImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing MicImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Image: failed to import MicImagePlugin: No module named 'olefile'
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing MpegImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing MpoImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing MspImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PalmImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PcdImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PcxImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PdfImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PixarImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PngImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PpmImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing PsdImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing QoiImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing SgiImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing SpiderImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing SunImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing TgaImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing TiffImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing WebPImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing WmfImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing XbmImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing XpmImagePlugin
+2026-03-09 22:16:12 [DEBUG] PIL.Image: Importing XVThumbImagePlugin
+2026-03-09 22:16:12 [DEBUG] httpcore.connection: connect_tcp.started host='huggingface.co' port=443 local_address=None timeout=None socket_options=None
+2026-03-09 22:16:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x0000023BB0D38E00>
+2026-03-09 22:16:12 [DEBUG] httpcore.connection: start_tls.started ssl_context=<ssl.SSLContext object at 0x0000023BB325D250> server_hostname='huggingface.co' timeout=None
+2026-03-09 22:16:12 [DEBUG] httpcore.connection: start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x0000023BB1465820>
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Date', b'Tue, 10 Mar 2026 01:16:12 GMT'), (b'Access-Control-Expose-Headers', b'X-Repo-Commit,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Linked-Size,X-Linked-ETag,X-Xet-Hash'), (b'content-encoding', b'gzip'), (b'X-Powered-By', b'huggingface-moon'), (b'X-Request-Id', b'Root=1-69af70dc-4c98e6d3456b3dbc76807771;3101d459-b13b-4588-acc4-92564e7a2307'), (b'RateLimit', b'"api";r=499;t=168'), (b'RateLimit-Policy', b'"fixed window";"api";q=500;w=300'), (b'cross-origin-opener-policy', b'same-origin'), (b'Referrer-Policy', b'strict-origin-when-cross-origin'), (b'Access-Control-Max-Age', b'86400'), (b'Access-Control-Allow-Origin', b'https://huggingface.co'), (b'Vary', b'Origin'), (b'vary', b'accept-encoding'), (b'ETag', b'W/"11dd-TiV3hlfIJXDPBmiotrn+wkiuCtc"'), (b'X-Cache', b'Miss from cloudfront'), (b'Via', b'1.1 6c3c781a6735a5844fae6451459bf11e.cloudfront.net (CloudFront)'), (b'X-Amz-Cf-Pop', b'GRU1-P3'), (b'X-Amz-Cf-Id', b'H37RtryLDSZ9AruDYVQRHEcwUHrHO_ic2u26YXa_ElGGBjkvXbJxDw==')])
+2026-03-09 22:16:12 [INFO] httpx: HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-large-v3/revision/main "HTTP/1.1 200 OK"
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: response_closed.started
+2026-03-09 22:16:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-03-09 22:16:38 [INFO] faster_whisper: Processing audio with duration 00:01.000
+2026-03-09 22:16:38 [DEBUG] faster_whisper: Processing segment at 00:00.000
+2026-03-09 22:16:43 [INFO] faster_whisper: Processing audio with duration 00:05.190
+2026-03-09 22:16:43 [INFO] faster_whisper: VAD filter removed 00:01.872 of audio
+2026-03-09 22:16:43 [DEBUG] faster_whisper: VAD filter kept the following audio segments: [00:00.176 -> 00:01.456], [00:03.152 -> 00:05.190]
+2026-03-09 22:16:43 [DEBUG] faster_whisper: Processing segment at 00:00.000
+2026-03-09 22:16:43 [INFO] speechtotext.assistant_worker: Trying local provider: ollama
+2026-03-09 22:16:46 [INFO] speechtotext.assistant_worker: Local provider succeeded: ollama
+2026-03-09 22:16:55 [INFO] faster_whisper: Processing audio with duration 00:00.240
+2026-03-09 22:16:55 [INFO] faster_whisper: VAD filter removed 00:00.240 of audio
+2026-03-09 22:16:55 [DEBUG] faster_whisper: VAD filter kept the following audio segments: 
+2026-03-09 22:16:57 [INFO] faster_whisper: Processing audio with duration 00:01.000
+2026-03-09 22:16:57 [DEBUG] faster_whisper: Processing segment at 00:00.000
+2026-03-09 22:16:59 [INFO] faster_whisper: Processing audio with duration 00:03.630
+2026-03-09 22:16:59 [INFO] faster_whisper: VAD filter removed 00:00.656 of audio
+2026-03-09 22:16:59 [DEBUG] faster_whisper: VAD filter kept the following audio segments: [00:00.112 -> 00:01.296], [00:01.840 -> 00:03.630]
+2026-03-09 22:16:59 [DEBUG] faster_whisper: Processing segment at 00:00.000
+2026-03-09 22:16:59 [INFO] speechtotext.assistant_worker: assistant provider=cloud prompt='what time is it now?' priority=['gemini', 'claude', 'groq']
+2026-03-09 22:16:59 [INFO] speechtotext.assistant_worker: Cloud AI priority: ['gemini', 'claude', 'groq']
+2026-03-09 22:16:59 [INFO] speechtotext.assistant_worker: Trying cloud provider: gemini
+2026-03-09 22:17:03 [INFO] speechtotext.assistant_worker: Cloud provider succeeded: gemini
+2026-03-09 22:17:15 [INFO] faster_whisper: Processing audio with duration 00:00.420
+2026-03-09 22:17:15 [INFO] faster_whisper: VAD filter removed 00:00.420 of audio
+2026-03-09 22:17:15 [DEBUG] faster_whisper: VAD filter kept the following audio segments: 
+2026-03-09 22:17:42 [INFO] faster_whisper: Processing audio with duration 00:01.000
+2026-03-09 22:17:42 [DEBUG] faster_whisper: Processing segment at 00:00.000
+2026-03-09 22:17:46 [INFO] faster_whisper: Processing audio with duration 00:05.430
+2026-03-09 22:17:46 [INFO] faster_whisper: VAD filter removed 00:01.264 of audio
+2026-03-09 22:17:46 [DEBUG] faster_whisper: VAD filter kept the following audio segments: [00:00.080 -> 00:01.296], [00:02.480 -> 00:05.430]
+2026-03-09 22:17:46 [DEBUG] faster_whisper: Processing segment at 00:00.000
+2026-03-09 22:17:47 [INFO] speechtotext.assistant_worker: assistant provider=cloud prompt='what is SQL?' priority=['gemini', 'claude', 'groq']
+2026-03-09 22:17:47 [INFO] speechtotext.assistant_worker: Cloud AI priority: ['gemini', 'claude', 'groq']
+2026-03-09 22:17:47 [INFO] speechtotext.assistant_worker: Trying cloud provider: gemini
+2026-03-09 22:17:47 [WARNING] speechtotext.assistant_worker: Gemini failed: Gemini API error: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash
+Please retry in 12.542346378s.
+2026-03-09 22:17:47 [INFO] speechtotext.assistant_worker: Skipping claude: no API key
+2026-03-09 22:17:47 [INFO] speechtotext.assistant_worker: Trying cloud provider: groq
+2026-03-09 22:17:48 [INFO] speechtotext.assistant_worker: Cloud provider succeeded: groq
+2026-03-09 22:17:53 [INFO] faster_whisper: Processing audio with duration 00:00.240
+2026-03-09 22:17:53 [INFO] faster_whisper: VAD filter removed 00:00.240 of audio
+2026-03-09 22:17:53 [DEBUG] faster_whisper: VAD filter kept the following audio segments: 
+2026-03-09 22:17:53 [INFO] faster_whisper: Processing audio with duration 00:00.210
+2026-03-09 22:17:53 [INFO] faster_whisper: VAD filter removed 00:00.210 of audio
+2026-03-09 22:17:53 [DEBUG] faster_whisper: VAD filter kept the following audio segments: 
+2026-03-09 22:18:06 [INFO] faster_whisper: Processing audio with duration 00:01.000
+2026-03-09 22:18:06 [DEBUG] faster_whisper: Processing segment at 00:00.000
+2026-03-09 22:18:07 [INFO] faster_whisper: Processing audio with duration 00:01.410
+2026-03-09 22:18:07 [INFO] faster_whisper: VAD filter removed 00:01.410 of audio
+2026-03-09 22:18:07 [DEBUG] faster_whisper: VAD filter kept the following audio segments: 
+2026-03-09 22:18:15 [INFO] faster_whisper: Processing audio with duration 00:00.900
+2026-03-09 22:18:15 [INFO] faster_whisper: VAD filter removed 00:00.900 of audio
+2026-03-09 22:18:15 [DEBUG] faster_whisper: VAD filter kept the following audio segments: 

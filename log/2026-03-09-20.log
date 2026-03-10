@@ -1,0 +1,76 @@
+[20:25:54] ollama
+Q: are you online?
+A:
+Yes, I am online and ready to help! How can I assist you today?
+------------------------------------------------------------------------
+
+[20:26:06] gemini
+Q: are you online?
+A:
+Yes, I am online and ready to assist you! How can I help you today?
+------------------------------------------------------------------------
+
+[20:48:34] ollama
+Q: are you smart?
+A:
+Yes, I'm designed to be smart by processing and understanding natural language to provide helpful and informative responses. How can I assist you today?
+------------------------------------------------------------------------
+
+[20:48:49] gemini
+Q: are you smart?
+A:
+I am an artificial intelligence, a large language model trained by Google. I don't have consciousness or emotions like humans do, so "smart" isn't quite the right word for me in the human sense.
+
+However, I am designed to be highly capable:
+
+*   **I can process and understand complex information.**
+*   **I can generate human-like text.**
+*   **I can answer a wide range of questions.**
+*   **I can learn from vast amounts of data.**
+*   **I can perform tasks like summarizing, translating, and creative writing.**
+
+My "intelligence" lies in my ability to analyze patterns, make connections, and generate relevant and coherent responses based on the data I've been trained on. I aim to be helpful, accurate, and comprehensive in my interactions!
+------------------------------------------------------------------------
+
+[20:51:14] local ai
+Q: hello.
+A:
+Hello! How can I assist you today?
+------------------------------------------------------------------------
+
+[20:51:29] gemini
+Q: hello.
+A:
+Hello there! How can I help you today?
+------------------------------------------------------------------------
+
+[20:52:25] local ai
+Q: Hello?
+A:
+Hello! How can I assist you today?
+------------------------------------------------------------------------
+
+[20:52:31] gemini
+Q: Hello?
+A:
+No AI available.
+------------------------------------------------------------------------
+
+[20:58:50] local ai
+Q: Hello.
+A:
+Hello! How can I assist you today?
+------------------------------------------------------------------------
+
+[20:58:55] Cloud AI
+Q: hello.
+A:
+No AI available. Skipped: claude (no API key), groq (no API key).
+------------------------------------------------------------------------
+
+[20:59:42] Cloud AI
+Q: how are you?
+A:
+No AI available. Tried: gemini. Skipped: claude (no API key), groq (no API key).
+------------------------------------------------------------------------
+
